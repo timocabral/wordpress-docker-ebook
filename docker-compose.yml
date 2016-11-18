@@ -1,0 +1,44 @@
+version: '2'
+services:
+  nginx:
+    build: .
+    volumes:
+      - "/home/thymo/ex.ebook:/var/www/html"
+    ports:
+      - "8887:80"
+    links:
+      - php-app
+  php-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.php-fpm
+    ports:
+      - "9000:9000"
+    volumes:
+      - "/home/thymo/ex.ebook:/var/www/html"
+    links:
+      - my-mysql
+  my-mysql:
+    image: mysql:5.7
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wp
+      MYSQL_DATABASE: wp
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wp
+  phpmyadmin:
+    image: corbinu/docker-phpmyadmin
+    links:
+      - my-mysql
+    ports:
+      - 8181:80
+    environment:
+      MYSQL_ROOT_PASSWORD: wp
+      MYSQL_DATABASE: wp
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wp
+
+
+
